@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <%- include('partials/head', { pageTitle: 'Em Desenvolvimento — Revista Habitare', metaDescription: 'Estamos trabalhando nisso. Em breve você terá acesso a este conteúdo.' }) %>
+    <style>
+      .coming-soon {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+      }
+      
+      .coming-soon__card {
+        text-align: center;
+        max-width: 600px;
+        padding: 4rem 3rem;
+        background: var(--bg-panel);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-medium);
+      }
+      
+      .coming-soon__icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 2rem;
+        background: rgba(196, 85, 39, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 2s ease-in-out infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 0.9;
+        }
+      }
+      
+      .coming-soon__icon svg {
+        width: 40px;
+        height: 40px;
+        color: var(--brand);
+      }
+      
+      .coming-soon h1 {
+        font-size: 2.5rem;
+        margin: 0 0 1rem;
+        color: var(--text-main);
+      }
+      
+      .coming-soon p {
+        font-size: 1.125rem;
+        color: var(--text-muted);
+        line-height: 1.7;
+        margin: 0 0 2.5rem;
+      }
+      
+      .coming-soon__actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      @media (max-width: 768px) {
+        .coming-soon__card {
+          padding: 3rem 2rem;
+        }
+        
+        .coming-soon h1 {
+          font-size: 2rem;
+        }
+        
+        .coming-soon p {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body id="topo">
+    <%- include('partials/header') %>
+    <main class="page">
+      <section class="coming-soon">
+        <div class="coming-soon__card">
+          <div class="coming-soon__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 17L12 22L22 17" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 12L12 17L22 12" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <p class="eyebrow">Em Desenvolvimento</p>
+          <h1>Estamos trabalhando nisso</h1>
+          <p>Nossa equipe está desenvolvendo este conteúdo com muito cuidado e atenção aos detalhes. Em breve você terá acesso a uma experiência incrível.</p>
+          <div class="coming-soon__actions">
+            <a href="/" class="button primary">Voltar para a Home</a>
+            <a href="/" class="button ghost">Ver Matérias</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <%- include('partials/footer') %>
+  </body>
+</html>
+

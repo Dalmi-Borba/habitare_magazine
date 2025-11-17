@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <%- include('../partials/head', { pageTitle, metaDescription }) %>
+    <link rel="stylesheet" href="/css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <header class="admin-header">
+      <div>
+        <p class="eyebrow">Painel Habitare</p>
+        <h1>Subir artigo e hero interativo</h1>
+        <p>Faça upload da imagem principal, textos e métricas. Em seguida, arraste os pins sobre a foto.</p>
+      </div>
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <a class="button ghost" href="/">Ver edição ao vivo</a>
+        <form action="/admin/logout" method="POST" style="margin: 0;">
+          <button class="button ghost" type="submit">Sair</button>
+        </form>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <% if (flash) { %>
+      <div class="admin-alert">
+        <% if (flash === 'artigo-criado') { %>
+          Artigo criado com sucesso!
+        <% } else if (flash === 'artigo-atualizado') { %>
+          Artigo atualizado com sucesso!
+        <% } else { %>
+          Conteúdo salvo com sucesso.
+        <% } %>
+      </div>
+      <% } %>
+
+      <section class="admin-card">
+        <h2>Nova matéria</h2>
+        <form class="admin-form" id="article-form" action="/admin/articles" method="POST" enctype="multipart/form-data">
+          <div class="form-grid">
+            <label class="full">
+              Título da matéria*
+              <input type="text" name="title" required placeholder="Edição Casa Observatório" />
+            </label>
+            <label class="full">
+              Texto da matéria*
+              <textarea
+                name="body_text"
+                rows="6"
+                required
+                placeholder="Descreva a narrativa que aparece na home e no modal."
+              ></textarea>
+            </label>
+            <label class="full">
+              Upload da imagem destaque
+              <input type="file" name="hero_image" accept="image/*" />
+              <small>ou cole uma URL abaixo</small>
+            </label>
+            <label class="full">
+              URL da imagem (opcional)
+              <input type="url" name="hero_image_url" placeholder="https://..." />
+            </label>
+            <label class="full">
+              Múltiplas imagens para carrossel
+              <input type="file" name="article_images" accept="image/*" multiple />
+              <small>Você pode selecionar várias imagens de uma vez. Elas aparecerão em um carrossel no artigo.</small>
+              <div id="image-preview" style="margin-top: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;"></div>
+            </label>
+          </div>
+          <button class="button primary" type="button" id="publish-btn">Publicar artigo</button>
+        </form>
+      </section>
+
+      <section class="admin-card">
+        <h2>Artigos publicados</h2>
+        <div class="admin-articles">
+          <% if (!articles.length) { %>
+          <p>Ainda não há matérias publicadas.</p>
+          <% } %>
+          <% articles.forEach(function(article) { %>
+          <article class="admin-articles__item">
+            <div>
+              <p class="eyebrow"><%= article.category || 'Sem categoria' %></p>
+              <h3><%= article.title %></h3>
+              <p><%= article.subtitle || article.excerpt %></p>
+              <small>Atualizado em <%= formatDate(article.published_at) %></small>
+            </div>
+            <div class="admin-articles__actions">
+              <a class="button ghost" href="/artigos/<%= article.slug %>" target="_blank" rel="noreferrer">Ver</a>
+              <a class="button ghost" href="/admin/articles/<%= article.id %>/edit">Editar</a>
+              <a class="button primary" href="/admin/articles/<%= article.id %>/pins">Pins</a>
+              <button class="button ghost delete-article" data-article-id="<%= article.id %>" data-article-title="<%= article.title %>">Excluir</button>
+            </div>
+          </article>
+          <% }) %>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Interceptar submit do formulário para mostrar login
+      const publishBtn = document.getElementById('publish-btn');
+      const articleForm = document.getElementById('article-form');
+      
+      if (publishBtn && articleForm) {
+        publishBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          
+          // Salvar dados do formulário no sessionStorage antes de redirecionar
+          const formData = new FormData(articleForm);
+          const formDataObj = {};
+          for (let [key, value] of formData.entries()) {
+            if (key === 'article_images' || key === 'hero_image') {
+              // Para arquivos, não podemos salvar no sessionStorage
+              // Mas podemos marcar que há um formulário pendente
+              continue;
+            }
+            formDataObj[key] = value;
+          }
+          
+          // Salvar flag indicando que há um formulário pendente
+          sessionStorage.setItem('pendingArticleForm', JSON.stringify(formDataObj));
+          sessionStorage.setItem('pendingArticleSubmit', 'true');
+          
+          // Sempre redirecionar para login quando clicar em "Publicar artigo"
+          window.location.href = '/admin/login?redirect=' + encodeURIComponent('/admin');
+        });
+      }
+      
+      // Após carregar a página, verificar se há formulário pendente para submeter
+      window.addEventListener('DOMContentLoaded', () => {
+        const pendingSubmit = sessionStorage.getItem('pendingArticleSubmit');
+        if (pendingSubmit === 'true' && articleForm) {
+          const savedFormData = sessionStorage.getItem('pendingArticleForm');
+          if (savedFormData) {
+            try {
+              const formDataObj = JSON.parse(savedFormData);
+              // Restaurar valores dos campos de texto
+              Object.keys(formDataObj).forEach(key => {
+                const input = articleForm.querySelector(`[name="${key}"]`);
+                if (input && (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA')) {
+                  if (input.type !== 'file') {
+                    input.value = formDataObj[key];
+                  }
+                }
+              });
+              
+              // Limpar flags
+              sessionStorage.removeItem('pendingArticleSubmit');
+              sessionStorage.removeItem('pendingArticleForm');
+              
+              // Submeter o formulário automaticamente
+              setTimeout(() => {
+                articleForm.submit();
+              }, 500);
+            } catch (error) {
+              console.error('Erro ao restaurar formulário:', error);
+              sessionStorage.removeItem('pendingArticleSubmit');
+              sessionStorage.removeItem('pendingArticleForm');
+            }
+          }
+        }
+      });
+
+      // Preview de imagens múltiplas
+      const imageInput = document.querySelector('input[name="article_images"]');
+      const imagePreview = document.getElementById('image-preview');
+      
+      if (imageInput && imagePreview) {
+        imageInput.addEventListener('change', (e) => {
+          imagePreview.innerHTML = '';
+          const files = Array.from(e.target.files);
+          
+          files.forEach((file) => {
+            if (file.type.startsWith('image/')) {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                const img = document.createElement('img');
+                img.src = event.target.result;
+                img.style.width = '100%';
+                img.style.height = '150px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '4px';
+                img.style.border = '1px solid #e0d7cf';
+                imagePreview.appendChild(img);
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        });
+      }
+
+      document.querySelectorAll('.delete-article').forEach((button) => {
+        button.addEventListener('click', async () => {
+          const articleId = button.dataset.articleId;
+          const articleTitle = button.dataset.articleTitle;
+
+          if (!confirm(`Tem certeza que deseja excluir "${articleTitle}"? Esta ação não pode ser desfeita.`)) {
+            return;
+          }
+
+          try {
+            const response = await fetch(`/admin/articles/${articleId}`, {
+              method: 'DELETE'
+            });
+
+            if (response.ok) {
+              button.closest('article').remove();
+              if (document.querySelectorAll('.admin-articles__item').length === 0) {
+                document.querySelector('.admin-articles').innerHTML = '<p>Ainda não há matérias publicadas.</p>';
+              }
+            } else {
+              alert('Erro ao excluir o artigo.');
+            }
+          } catch (error) {
+            console.error(error);
+            alert('Erro ao excluir o artigo.');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

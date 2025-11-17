@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <%- include('../partials/head', { pageTitle, metaDescription }) %>
+    <link rel="stylesheet" href="/css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <header class="admin-header">
+      <div>
+        <p class="eyebrow">Editor de pins</p>
+        <h1><%= article.title %></h1>
+        <p>Arraste os pins sobre a imagem destaque e atualize detalhes de produto.</p>
+      </div>
+      <div class="admin-header__actions">
+        <a class="button ghost" href="/admin">Voltar</a>
+        <a class="button" href="/artigos/<%= article.slug %>" target="_blank" rel="noreferrer">Ver página</a>
+        <form action="/admin/logout" method="POST" style="margin: 0;">
+          <button class="button ghost" type="submit">Sair</button>
+        </form>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <section
+        class="pin-editor"
+        data-pin-editor
+        data-article-id="<%= article.id %>"
+        data-save-endpoint="/admin/articles/<%= article.id %>/pins"
+      >
+        <div class="pin-editor__canvas">
+          <div
+            class="pin-editor__image"
+            style="background-image: url('<%= article.hero_image %>');"
+            data-pin-image
+          >
+            <div class="pin-editor__layer" data-pin-layer></div>
+          </div>
+          <div class="pin-editor__helpers">
+            <button class="button ghost" type="button" data-add-pin>Adicionar pin</button>
+            <p>Arraste os pontos e depois preencha nome, descrição, preço e link.</p>
+          </div>
+        </div>
+        <div class="pin-editor__panel">
+          <div class="pin-editor__list" data-pin-list></div>
+          <form class="pin-editor__form" data-pin-form>
+            <label>
+              Nome
+              <input type="text" data-field="name" placeholder="Nome do produto" />
+            </label>
+            <label>
+              Descrição
+              <textarea data-field="description" rows="2" placeholder="Resumo do produto"></textarea>
+            </label>
+            <label>
+              Preço / label
+              <input type="text" data-field="price_label" placeholder="R$ 0,00" />
+            </label>
+            <label>
+              Link da loja (ou slug)
+              <input type="text" data-field="cta_path" placeholder="produto-exclusivo ou https://..." />
+            </label>
+            <div class="pin-editor__coords">
+              <span>X: <strong data-display="x">0%</strong></span>
+              <span>Y: <strong data-display="y">0%</strong></span>
+            </div>
+            <div class="pin-editor__form-actions">
+              <button class="button ghost" type="button" data-delete-pin>Remover pin</button>
+              <button class="button primary" type="button" data-save-pin>Salvar pins</button>
+            </div>
+            <p class="pin-editor__feedback" data-feedback></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      window.__PIN_DATA__ = <%- JSON.stringify(pins) %>;
+    </script>
+    <script type="module" src="/js/admin-pins.js"></script>
+  </body>
+</html>

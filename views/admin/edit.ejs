@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <%- include('../partials/head', { pageTitle, metaDescription }) %>
+    <link rel="stylesheet" href="/css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <header class="admin-header">
+      <div>
+        <p class="eyebrow">Editor Habitare</p>
+        <h1>Editar artigo</h1>
+        <p>Atualize os detalhes da matéria.</p>
+      </div>
+      <div class="admin-header__actions">
+        <a class="button ghost" href="/admin">Voltar</a>
+        <a class="button" href="/artigos/<%= article.slug %>" target="_blank" rel="noreferrer">Ver página</a>
+        <form action="/admin/logout" method="POST" style="margin: 0;">
+          <button class="button ghost" type="submit">Sair</button>
+        </form>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <section class="admin-card">
+        <h2>Editar matéria</h2>
+        <form class="admin-form" action="/admin/articles/<%= article.id %>" method="POST" enctype="multipart/form-data">
+          <div class="form-grid">
+            <label class="full">
+              Título da matéria*
+              <input type="text" name="title" required value="<%= article.title %>" placeholder="Edição Casa Observatório" />
+            </label>
+            <label class="full">
+              Texto da matéria*
+              <textarea
+                name="body_text"
+                rows="6"
+                required
+                placeholder="Descreva a narrativa que aparece na home e no modal."
+              ><%= article.body_html || article.excerpt %></textarea>
+            </label>
+            <label>
+              Categoria
+              <input type="text" name="category" value="<%= article.category || '' %>" placeholder="Edição interativa" />
+            </label>
+            <label>
+              Autor
+              <input type="text" name="author" value="<%= article.author || '' %>" placeholder="Estúdio Habitare" />
+            </label>
+            <label>
+              Função do autor
+              <input type="text" name="author_role" value="<%= article.author_role || '' %>" placeholder="Conteúdo & ativações" />
+            </label>
+            <label class="full">
+              Upload da imagem destaque
+              <input type="file" name="hero_image" accept="image/*" />
+              <small>ou cole uma URL abaixo</small>
+            </label>
+            <label class="full">
+              URL da imagem (opcional)
+              <input type="url" name="hero_image_url" value="<%= article.hero_image %>" placeholder="https://..." />
+            </label>
+            <label class="full">
+              Adicionar mais imagens para carrossel
+              <input type="file" name="article_images" accept="image/*" multiple />
+              <small>Você pode selecionar várias imagens de uma vez. Elas aparecerão em um carrossel no artigo.</small>
+              <div id="image-preview" style="margin-top: 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;"></div>
+            </label>
+          </div>
+          <div style="display: flex; gap: 1rem;">
+            <button class="button primary" type="submit">Salvar alterações</button>
+            <a class="button ghost" href="/admin">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <script>
+
+      // Preview de imagens múltiplas
+      const imageInput = document.querySelector('input[name="article_images"]');
+      const imagePreview = document.getElementById('image-preview');
+      
+      if (imageInput && imagePreview) {
+        imageInput.addEventListener('change', (e) => {
+          imagePreview.innerHTML = '';
+          const files = Array.from(e.target.files);
+          
+          files.forEach((file) => {
+            if (file.type.startsWith('image/')) {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                const img = document.createElement('img');
+                img.src = event.target.result;
+                img.style.width = '100%';
+                img.style.height = '150px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '4px';
+                img.style.border = '1px solid #e0d7cf';
+                imagePreview.appendChild(img);
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
+

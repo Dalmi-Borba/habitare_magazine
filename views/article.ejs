@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <%- include('partials/head', { pageTitle, metaDescription }) %>
+  </head>
+  <body id="topo">
+    <%- include('partials/header') %>
+    <main class="page article-page">
+      <article class="article-hero">
+        <div>
+          <p class="eyebrow"><%= article.category %></p>
+          <h1><%= article.title %></h1>
+          <p class="hero__subtitle"><%= article.subtitle %></p>
+        </div>
+        <div class="article-hero__meta">
+          <div>
+            <span>Por <%= article.author %></span>
+            <p><%= article.author_role %></p>
+          </div>
+          <div>
+            <span><%= formatDate(article.published_at) %></span>
+            <p><%= readingLabel(article.reading_time) %></p>
+          </div>
+        </div>
+        <figure class="article-hero__media" data-pin-surface>
+          <img src="<%= article.hero_image %>" alt="<%= article.title %>" />
+          <figcaption><%= article.hero_caption %></figcaption>
+          <div class="article-hero__pins">
+            <% pins.forEach(function(pin) { %>
+            <button
+              class="product-pin"
+              style="left: <%= pin.x_percent %>%; top: <%= pin.y_percent %>%;"
+              data-pin="true"
+              data-name="<%= pin.name %>"
+              data-description="<%= pin.description %>"
+              data-price="<%= pin.price_label %>"
+              data-cta="<%= pin.trackingUrl %>"
+              data-badge="<%= pin.badge %>"
+            >
+              <span></span>
+            </button>
+            <% }) %>
+          </div>
+          <div class="product-popover" data-popover aria-hidden="true">
+            <p class="eyebrow">Produto em destaque</p>
+            <p class="product-popover__badge" data-badge></p>
+            <h3 data-title></h3>
+            <p data-description></p>
+            <p class="product-popover__price" data-price></p>
+            <a class="button primary" target="_blank" rel="noreferrer" data-cta>Comprar</a>
+          </div>
+        </figure>
+      </article>
+
+      <% if (article.body_html) { %>
+      <section class="article-body">
+        <div class="article-body__content">
+          <%- article.body_html %>
+        </div>
+      </section>
+      <% } %>
+
+      <% if (images && images.length > 0) { %>
+      <section class="article-carousel">
+        <div class="carousel-container">
+          <div class="carousel-track" id="carousel-track">
+            <% images.forEach(function(img) { %>
+            <div class="carousel-slide">
+              <img src="<%= img.image_url %>" alt="<%= img.image_caption || article.title %>" />
+              <% if (img.image_caption) { %>
+              <figcaption><%= img.image_caption %></figcaption>
+              <% } %>
+            </div>
+            <% }) %>
+          </div>
+          <% if (images.length > 1) { %>
+          <button class="carousel-button carousel-button--prev" id="carousel-prev" aria-label="Imagem anterior">‹</button>
+          <button class="carousel-button carousel-button--next" id="carousel-next" aria-label="Próxima imagem">›</button>
+          <div class="carousel-dots" id="carousel-dots">
+            <% images.forEach(function(img, index) { %>
+            <button class="carousel-dot <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>" aria-label="Ir para imagem <%= index + 1 %>"></button>
+            <% }) %>
+          </div>
+          <% } %>
+        </div>
+      </section>
+      <% } %>
+
+      <section class="article-sections">
+        <% sections.forEach(function(section) { %>
+        <article class="article-section article-section--<%= section.layout_type || 'text' %>">
+          <% if (section.layout_type === 'image' || section.layout_type === 'image-text') { %>
+            <% if (section.media_url) { %>
+            <figure class="article-section__media">
+              <img src="<%= section.media_url %>" alt="<%= section.heading %>" />
+              <% if (section.media_caption) { %>
+              <figcaption><%= section.media_caption %></figcaption>
+              <% } %>
+            </figure>
+            <% } %>
+          <% } %>
+          
+          <% if (section.heading || section.content) { %>
+          <div class="article-section__content">
+            <% if (section.heading) { %>
+            <h2><%= section.heading %></h2>
+            <% } %>
+            <% if (section.content) { %>
+            <p><%= section.content %></p>
+            <% } %>
+          </div>
+          <% } %>
+
+          <% if (section.layout_type === 'text-image' && section.media_url) { %>
+          <figure class="article-section__media">
+            <img src="<%= section.media_url %>" alt="<%= section.heading %>" />
+            <% if (section.media_caption) { %>
+            <figcaption><%= section.media_caption %></figcaption>
+            <% } %>
+          </figure>
+          <% } %>
+        </article>
+        <% }) %>
+      </section>
+    </main>
+    <%- include('partials/footer') %>
+    <script type="module" src="/js/main.js"></script>
+  </body>
+</html>

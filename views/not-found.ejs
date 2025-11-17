@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <%- include('partials/head', { pageTitle, metaDescription: message }) %>
+  </head>
+  <body class="not-found">
+    <main class="page">
+      <section class="not-found__card">
+        <p class="eyebrow">Ops</p>
+        <h1><%= pageTitle %></h1>
+        <p><%= message %></p>
+        <a class="button primary" href="/">Voltar para a edição</a>
+      </section>
+    </main>
+  </body>
+</html>

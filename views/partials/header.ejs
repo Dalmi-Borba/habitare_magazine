@@ -1,0 +1,64 @@
+  <header class="site-header">
+    <div class="site-logo">
+      <a href="/" class="site-logo__link">habitare</a>
+    </div>
+    <nav class="site-nav" aria-label="Navegação principal">
+      <a href="/" class="<%= currentPath === '/' ? 'is-active' : '' %>">Matérias</a>
+      <a href="/em-desenvolvimento">Projetos</a>
+      <a href="/em-desenvolvimento">Profissionais</a>
+      <a href="/em-desenvolvimento">Tendências</a>
+      <a href="/em-desenvolvimento">Marcas</a>
+    </nav>
+    <div class="site-header__actions">
+      <div class="site-search">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14 14L11.1 11.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <input type="search" placeholder="Buscar inspirações..." />
+      </div>
+      <a href="/em-desenvolvimento" class="site-icon-button" aria-label="Favoritos">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.3667 3.84167C16.941 3.41584 16.4357 3.0801 15.88 2.85334C15.3243 2.62659 14.7286 2.5127 14.1275 2.51834C13.5264 2.5127 12.9307 2.62659 12.375 2.85334C11.8193 3.0801 11.314 3.41584 10.8883 3.84167L10 4.73L9.11167 3.84167C8.2565 2.9865 7.09084 2.51873 5.8725 2.51873C4.65416 2.51873 3.4885 2.9865 2.63333 3.84167C1.77816 4.69684 1.31039 5.8625 1.31039 7.08084C1.31039 8.29917 1.77816 9.46484 2.63333 10.32L3.52167 11.2083L10 17.6867L16.4783 11.2083L17.3667 10.32C17.7925 9.89417 18.1283 9.38884 18.355 8.83317C18.5818 8.2775 18.6957 7.68184 18.69 7.08084C18.6957 6.47973 18.5818 5.88406 18.355 5.32834C18.1283 4.77263 17.7925 4.2673 17.3667 3.84167Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="<%= instagramUrl %>" target="_blank" rel="noreferrer" class="site-icon-button" aria-label="Instagram">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.1667 2.5H5.83333C3.99238 2.5 2.5 3.99238 2.5 5.83333V14.1667C2.5 16.0076 3.99238 17.5 5.83333 17.5H14.1667C16.0076 17.5 17.5 16.0076 17.5 14.1667V5.83333C17.5 3.99238 16.0076 2.5 14.1667 2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13.3333 9.47501C13.4362 10.1685 13.3177 10.8769 12.9948 11.5119C12.6719 12.1468 12.161 12.6777 11.5347 13.0263C10.9084 13.3749 10.1986 13.525 9.48833 13.4583C8.77808 13.3916 8.10412 13.1114 7.56126 12.6583C7.0184 12.2052 6.63198 11.6019 6.45659 10.9308C6.2812 10.2598 6.32519 9.55311 6.58167 8.90834C6.83815 8.26357 7.29412 7.71269 7.88496 7.33728C8.4758 6.96187 9.17418 6.77979 9.88333 6.81667C10.6042 6.85501 11.2933 7.12334 11.8417 7.58334C12.39 8.04334 12.7658 8.66834 12.9083 9.36667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14.5833 5.41667H14.5917" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="/admin" class="button primary">Publicar</a>
+    </div>
+  </header>
+  <div class="promo-banner" id="promo-banner">
+    <div class="promo-banner__content">
+      <div class="promo-banner__left">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2.5 5.83333L10 1.66667L17.5 5.83333V15.8333C17.5 16.2754 17.3244 16.6993 17.0118 17.0118C16.6993 17.3244 16.2754 17.5 15.8333 17.5H4.16667C3.72464 17.5 3.30072 17.3244 2.98816 17.0118C2.67559 16.6993 2.5 16.2754 2.5 15.8333V5.83333Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7.5 10L9.16667 11.6667L12.5 8.33333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+          <strong>Marketplace Habitare</strong>
+          <span>Encontre todos os produtos dos projetos em um só lugar</span>
+        </div>
+      </div>
+      <div class="promo-banner__right">
+        <div>
+          <strong>Lançamento em breve</strong>
+          <span>Cadastre-se e seja o primeiro a saber!</span>
+        </div>
+        <a href="<%= marketplaceUrl %>" class="button ghost small">Saiba Mais
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left: 0.5rem;">
+            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+      <button class="promo-banner__close" onclick="document.getElementById('promo-banner').style.display='none'">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>

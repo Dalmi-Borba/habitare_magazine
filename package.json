@@ -1,0 +1,24 @@
+{
+  "name": "habitare",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "habitare",
+    "arquitetura"
+  ],
+  "author": "Habitare",
+  "license": "MIT",
+  "description": "Revista Habitare responsiva em Node, EJS e SQLite",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "sqlite3": "^5.1.7",
+    "tinymce": "^8.2.2"
+  }
+}

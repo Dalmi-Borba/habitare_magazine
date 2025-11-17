@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <%- include('partials/head', { pageTitle, metaDescription }) %>
+  </head>
+  <body id="topo">
+    <%- include('partials/header') %>
+    <main class="page">
+      <% if (heroArticle) { %>
+      <section class="hero-section">
+        <div class="hero-section__image">
+          <img src="<%= heroArticle.hero_image %>" alt="<%= heroArticle.title %>" />
+          <div class="hero-section__overlay"></div>
+        </div>
+        <div class="hero-section__content">
+          <span class="hero-section__badge">Matéria em Destaque</span>
+          <h1 class="hero-section__title">
+            <%= heroArticle.title.split(' ').slice(0, -1).join(' ') %> 
+            <span class="highlight"><%= heroArticle.title.split(' ').slice(-1)[0] %></span>
+          </h1>
+          <p class="hero-section__description"><%= heroArticle.subtitle %></p>
+          <div class="hero-section__actions">
+            <a href="/artigos/<%= heroArticle.slug %>" class="button ghost">Ler Matéria Completa</a>
+            <a href="/em-desenvolvimento" class="button ghost">Compartilhar</a>
+          </div>
+          <div class="hero-section__metrics">
+            <span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2Z" stroke="currentColor" stroke-width="1.5"/><path d="M8 5V8L10 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> 2.4k visualizações</span>
+            <span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.8933 3.07333C13.5528 2.73267 13.1485 2.46243 12.7036 2.27801C12.2586 2.09359 11.7817 1.99872 11.3 2C10.8183 1.99872 10.3414 2.09359 9.89643 2.27801C9.45146 2.46243 9.04717 2.73267 8.70667 3.07333L8 3.78L7.29333 3.07333C6.60555 2.38555 5.67269 1.99906 4.7 1.99906C3.72731 1.99906 2.79445 2.38555 2.10667 3.07333C1.41888 3.76112 1.0324 4.69397 1.0324 5.66667C1.0324 6.63936 1.41888 7.57221 2.10667 8.26L2.81333 8.96667L8 14.1533L13.1867 8.96667L13.8933 8.26C14.234 7.91949 14.5042 7.51521 14.6886 7.07024C14.8731 6.62526 14.9679 6.14832 14.9667 5.66667C14.9679 5.18501 14.8731 4.70808 14.6886 4.2631C14.5042 3.81813 14.234 3.41384 13.8933 3.07333Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> 186 curtidas</span>
+            <span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M12 6V13.3333C12 13.687 11.8595 14.0261 11.6095 14.2761C11.3594 14.5262 11.0203 14.6667 10.6667 14.6667H2.66667C2.31305 14.6667 1.97391 14.5262 1.72386 14.2761C1.47381 14.0261 1.33333 13.687 1.33333 13.3333V5.33333C1.33333 4.97971 1.47381 4.64057 1.72386 4.39052C1.97391 4.14048 2.31305 4 2.66667 4H6L7.33333 2.66667H10.6667C11.0203 2.66667 11.3594 2.80714 11.6095 3.05719C11.8595 3.30724 12 3.64638 12 4V6Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6H14.6667C15.0203 6 15.3594 6.14048 15.6095 6.39052C15.8595 6.64057 16 6.97971 16 7.33333V14.6667C16 15.0203 15.8595 15.3594 15.6095 15.6095C15.3594 15.8595 15.0203 16 14.6667 16H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> 47 compartilhamentos</span>
+          </div>
+        </div>
+      </section>
+      <% } %>
+      <section class="articles-grid" id="swimlane">
+        <div class="section-header">
+          <h2>Últimas Inspirações</h2>
+          <p>Descubra projetos incríveis que transformam espaços em experiências únicas. Cada detalhe pensado para inspirar seu próximo projeto.</p>
+        </div>
+        <div class="articles-grid__container">
+          <% if (articles && articles.length > 0) { %>
+            <% articles.forEach(function(article, index) { %>
+            <article class="article-card">
+              <div class="article-card__image-wrapper">
+                <a href="/artigos/<%= article.slug %>" class="article-card__link">
+                  <div class="article-card__image" data-pin-surface>
+                    <img src="<%= article.hero_image %>" alt="<%= article.title %>" />
+                    <div class="article-card__overlay">
+                      <span class="article-card__category"><%= article.category || 'Coleção' %></span>
+                    </div>
+                    <% if (article.pinCount && article.pins.length > 0) { %>
+                    <div class="article-card__pins">
+                      <% article.pins.forEach(function(pin) { %>
+                      <div class="pin-container" style="left: <%= pin.x_percent %>%; top: <%= pin.y_percent %>%;">
+                        <button
+                          class="product-pin"
+                          data-pin="true"
+                          data-name="<%= pin.name %>"
+                          data-description="<%= pin.description %>"
+                          data-price="<%= pin.price_label %>"
+                          data-cta="<%= pin.trackingUrl %>"
+                          data-badge="<%= pin.badge %>"
+                        >
+                          <span></span>
+                        </button>
+                        <div class="product-popover" data-popover>
+                          <p class="eyebrow">Produto em destaque</p>
+                          <p class="product-popover__badge"><%= pin.badge %></p>
+                          <h3><%= pin.name %></h3>
+                          <p><%= pin.description %></p>
+                          <p class="product-popover__price"><%= pin.price_label %></p>
+                          <a class="button primary" href="<%= pin.trackingUrl %>" target="_blank" rel="noreferrer">Quero ir para a loja</a>
+                        </div>
+                      </div>
+                      <% }) %>
+                    </div>
+                    <% } %>
+                  </div>
+                </a>
+              </div>
+              <a href="/artigos/<%= article.slug %>" class="article-card__link">
+                <div class="article-card__content">
+                  <h3 class="article-card__title"><%= article.title %></h3>
+                  <p class="article-card__subtitle"><%= article.subtitle %></p>
+                  <div class="article-card__meta">
+                    <span><%= article.author || 'Autor' %> <%= formatDate(article.published_at) %></span>
+                    <span class="article-card__views">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2.33333C4.10067 2.33333 1.75 4.68399 1.75 7.58333C1.75 10.4827 4.10067 12.8333 7 12.8333C9.89933 12.8333 12.25 10.4827 12.25 7.58333C12.25 4.68399 9.89933 2.33333 7 2.33333Z" stroke="currentColor" stroke-width="1.2"/><path d="M7 5.25V7.58333L8.75 9.33333" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                      <%= Math.floor(Math.random() * 2000 + 500) %>
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </article>
+            <% }) %>
+          <% } else { %>
+            <p>Nenhum artigo encontrado.</p>
+          <% } %>
+        </div>
+      </section>
+
+      <section class="partner-banner">
+        <div class="partner-banner__content">
+          <h2 class="partner-banner__title">Quer ser nosso parceiro?</h2>
+          <p class="partner-banner__description">Junte-se às melhores marcas do mercado e alcance profissionais de arquitetura e design em todo o Brasil</p>
+          <a href="/em-desenvolvimento">Saiba Mais
+          </a>
+        </div>
+      </section>
+
+      <section class="engagement-metrics">
+        <div class="engagement-metrics__header">
+          <h2 class="engagement-metrics__title">Alto Engajamento</h2>
+          <p class="engagement-metrics__description">Nossa plataforma conecta profissionais de arquitetura e design com uma audiência apaixonada por belos projetos e tendências de decoração.</p>
+        </div>
+        <div class="engagement-metrics__grid">
+          <div class="metric-card">
+            <div class="metric-card__icon" style="background: rgba(59, 130, 246, 0.1);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #3b82f6;">
+                <path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5Z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div class="metric-card__value">847K</div>
+            <div class="metric-card__label">Visualizações Mensais</div>
+            <div class="metric-card__growth">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 3L6 7L2 3" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span style="color: #10b981;">+23%</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card__icon" style="background: rgba(239, 68, 68, 0.1);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #ef4444;">
+                <path d="M20.84 4.61C20.3292 4.099 19.7228 3.69364 19.0554 3.41708C18.3879 3.14052 17.6725 2.99817 16.95 2.99817C16.2275 2.99817 15.5121 3.14052 14.8446 3.41708C14.1772 3.69364 13.5708 4.099 13.06 4.61L12 5.67L10.94 4.61C9.9083 3.57831 8.50903 2.99871 7.05 2.99871C5.59096 2.99871 4.19169 3.57831 3.16 4.61C2.1283 5.64169 1.54871 7.04097 1.54871 8.5C1.54871 9.95903 2.1283 11.3583 3.16 12.39L4.22 13.45L12 21.23L19.78 13.45L20.84 12.39C21.351 11.8792 21.7564 11.2728 22.0329 10.6054C22.3095 9.93789 22.4518 9.22248 22.4518 8.5C22.4518 7.77752 22.3095 7.0621 22.0329 6.39464C21.7564 5.72718 21.351 5.12075 20.84 4.61Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="metric-card__value">92.3K</div>
+            <div class="metric-card__label">Curtidas Totais</div>
+            <div class="metric-card__growth">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 3L6 7L2 3" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span style="color: #10b981;">+18%</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card__icon" style="background: rgba(16, 185, 129, 0.1);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #10b981;">
+                <path d="M18 8V5.33333C18 4.97971 17.8595 4.64057 17.6095 4.39052C17.3594 4.14048 17.0203 4 16.6667 4H5.33333C4.97971 4 4.64057 4.14048 4.39052 4.39052C4.14048 4.64057 4 4.97971 4 5.33333V18.6667C4 19.0203 4.14048 19.3594 4.39052 19.6095C4.64057 19.8595 4.97971 20 5.33333 20H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 4H20V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 14L20 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="metric-card__value">15.7K</div>
+            <div class="metric-card__label">Compartilhamentos</div>
+            <div class="metric-card__growth">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 3L6 7L2 3" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span style="color: #10b981;">+34%</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card__icon" style="background: rgba(168, 85, 247, 0.1);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #a855f7;">
+                <path d="M17 2H7C4.79086 2 3 3.79086 3 6V18C3 20.2091 4.79086 22 7 22H17C19.2091 22 21 20.2091 21 18V6C21 3.79086 19.2091 2 17 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M17.5 6.5H17.505" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="metric-card__value">156K</div>
+            <div class="metric-card__label">Seguidores Instagram</div>
+            <div class="metric-card__growth">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 3L6 7L2 3" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span style="color: #10b981;">+12%</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="publication-tools">
+        <div class="publication-tools__header">
+          <h2 class="publication-tools__title">Ferramentas de Publicação</h2>
+          <p class="publication-tools__description">Transforme sua forma de criar e compartilhar conteúdo sobre arquitetura e design. Nossa plataforma oferece tudo que você precisa para alcançar mais pessoas.</p>
+        </div>
+        <div class="publication-tools__grid">
+          <div class="feature-card">
+            <div class="feature-card__icon" style="background: rgba(59, 130, 246, 0.1);">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #3b82f6;">
+                <path d="M16 6L6 12L16 18L26 12L16 6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 20L16 26L26 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 16L16 22L26 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Editor Visual Intuitivo</h3>
+            <p class="feature-card__description">Crie matérias deslumbrantes com nosso editor drag-and-drop. Adicione imagens, textos e elementos visuais facilmente.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-card__icon" style="background: rgba(168, 85, 247, 0.1);">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #a855f7;">
+                <path d="M22 8H10C8.89543 8 8 8.89543 8 10V22C8 23.1046 8.89543 24 10 24H22C23.1046 24 24 23.1046 24 22V10C24 8.89543 23.1046 8 22 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 14C17.1046 14 18 13.1046 18 12C18 10.8954 17.1046 10 16 10C14.8954 10 14 10.8954 14 12C14 13.1046 14.8954 14 16 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8 18L12 14L16 18L24 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Galeria Profissional</h3>
+            <p class="feature-card__description">Organize suas fotos de projetos com tags inteligentes e filtros automáticos para facilitar a busca.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-card__icon" style="background: rgba(236, 72, 153, 0.1);">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #ec4899;">
+                <path d="M8 8H24C25.1046 8 26 8.89543 26 10V22C26 23.1046 25.1046 24 24 24H8C6.89543 24 6 23.1046 6 22V10C6 8.89543 6.89543 8 8 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 14H20M12 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Templates Personalizáveis</h3>
+            <p class="feature-card__description">Escolha entre diversos layouts profissionais ou crie seu próprio template para manter a identidade visual.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-card__icon" style="background: rgba(16, 185, 129, 0.1);">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #10b981;">
+                <path d="M16 6L6 12L16 18L26 12L16 6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 20L16 26L26 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 16L16 22L26 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Publicação Multiplataforma</h3>
+            <p class="feature-card__description">Publique simultaneamente no site, Instagram e Pinterest com adaptação automática para cada formato.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-card__icon" style="background: rgba(249, 115, 22, 0.1);">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #f97316;">
+                <path d="M6 24L6 26L26 26L26 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8 20L8 24L10 24L10 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 16L14 24L16 24L16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M20 12L20 24L22 24L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M26 8L26 24L24 24L24 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Analytics Avançado</h3>
+            <p class="feature-card__description">Monitore visualizações, engajamento e conversões. Identifique quais conteúdos geram mais interesse.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-card__icon" style="background: rgba(20, 184, 166, 0.1);">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #14b8a6;">
+                <path d="M16 6C10.4772 6 6 10.4772 6 16C6 21.5228 10.4772 26 16 26C21.5228 26 26 21.5228 26 16C26 10.4772 21.5228 6 16 6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 10V16L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Agendamento Inteligente</h3>
+            <p class="feature-card__description">Programe suas publicações para os melhores horários de engajamento baseado no comportamento da audiência.</p>
+          </div>
+        </div>
+        <div class="publication-tools__cta">
+          <h2 class="publication-tools__cta-title">Pronto para Revolucionar sua Presença Digital?</h2>
+          <p class="publication-tools__cta-description">Junte-se aos profissionais que já descobriram uma nova forma de compartilhar seus projetos e conectar com sua audiência.</p>
+          <div class="publication-tools__cta-actions">
+            <a href="/em-desenvolvimento" class="button primary">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 2L9 11L2 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18 2H12L9 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Começar a Publicar
+            </a>
+            <a href="/em-desenvolvimento" class="button ghost">Ver Demo da Plataforma</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script type="module" src="/js/main.js"></script>
+  </body>
+</html>
