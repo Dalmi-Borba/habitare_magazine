@@ -96,26 +96,12 @@ const toNumber = (value, fallback = 0) => {
 };
 
 const buildTrackedLink = (pin) => {
-  const base =
-    pin.cta_path && pin.cta_path.startsWith('http')
-      ? pin.cta_path
-      : `${SHOP_BASE_URL.replace(/\/$/, '')}/${(pin.cta_path || pin.slug).replace(/^\//, '')}`;
-
-  const [cleanBase, baseQuery] = base.split('?');
-  const params = new URLSearchParams(baseQuery || '');
-
-  if (pin.tracking_code) {
-    const trackingPairs = new URLSearchParams(pin.tracking_code);
-    trackingPairs.forEach((value, key) => params.set(key, value));
+  // Retorna o link completo diretamente, sem rastreamento
+  if (pin.cta_path && pin.cta_path.trim()) {
+    return pin.cta_path.trim();
   }
-
-  if (!params.has('utm_source')) {
-    params.set('utm_source', TRACKING_SOURCE);
-  }
-
-  params.set('utm_content', pin.slug);
-
-  return `${cleanBase}?${params.toString()}`;
+  // Fallback caso não tenha link
+  return '#';
 };
 
 // Middleware de autenticação
@@ -436,9 +422,9 @@ app.post('/admin/articles/:id/pins', requireAuth, async (req, res, next) => {
       const price = pin.price_label?.trim() || 'Sob consulta';
       const xPercent = Math.min(Math.max(Number(pin.x_percent) || 0, 0), 100);
       const yPercent = Math.min(Math.max(Number(pin.y_percent) || 0, 0), 100);
-      const ctaPath = pin.cta_path?.trim() || safeSlug;
-      const tracking =
-        pin.tracking_code?.trim() || `utm_source=${TRACKING_SOURCE}&utm_medium=magazine&utm_content=${safeSlug}`;
+      // Usar link completo diretamente, sem construção de URL
+      const ctaPath = pin.cta_path?.trim() || '';
+      const tracking = ''; // Sem rastreamento por enquanto
       const badge = pin.badge?.trim() || 'Destaque';
 
       await runStatement(

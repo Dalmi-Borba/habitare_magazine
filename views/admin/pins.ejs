@@ -37,7 +37,7 @@
           </div>
           <div class="pin-editor__helpers">
             <button class="button ghost" type="button" data-add-pin>Adicionar pin</button>
-            <p>Arraste os pontos e depois preencha nome, descrição, preço e link.</p>
+            <p>Arraste os pontos e depois preencha nome, descrição, preço e link completo (URL).</p>
           </div>
         </div>
         <div class="pin-editor__panel">
@@ -56,8 +56,8 @@
               <input type="text" data-field="price_label" placeholder="R$ 0,00" />
             </label>
             <label>
-              Link da loja (ou slug)
-              <input type="text" data-field="cta_path" placeholder="produto-exclusivo ou https://..." />
+              Link completo
+              <input type="url" data-field="cta_path" placeholder="https://exemplo.com/produto" />
             </label>
             <div class="pin-editor__coords">
               <span>X: <strong data-display="x">0%</strong></span>
