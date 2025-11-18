@@ -1,6 +1,6 @@
 // Service Worker para Revista Habitare
-const CACHE_NAME = 'habitare-v4';
-const RUNTIME_CACHE = 'habitare-runtime-v4';
+const CACHE_NAME = 'habitare-v5';
+const RUNTIME_CACHE = 'habitare-runtime-v5';
 
 // Assets para cachear na instalação (APENAS recursos do próprio site)
 const PRECACHE_ASSETS = [
@@ -74,9 +74,9 @@ self.addEventListener('fetch', (event) => {
     return; // Deixa o navegador lidar normalmente, sem interceptação
   }
 
-  // Ignorar requisições de API/admin que precisam ser sempre frescas
-  if (url.pathname.startsWith('/admin') && url.pathname !== '/admin') {
-    return;
+  // IGNORAR COMPLETAMENTE todas as rotas de admin (podem fazer redirecionamentos)
+  if (url.pathname.startsWith('/admin')) {
+    return; // Não interceptar, deixa passar direto
   }
 
   // Ignorar requisições de API
