@@ -1,8 +1,8 @@
 // Service Worker para Revista Habitare
-const CACHE_NAME = 'habitare-v2';
-const RUNTIME_CACHE = 'habitare-runtime-v2';
+const CACHE_NAME = 'habitare-v3';
+const RUNTIME_CACHE = 'habitare-runtime-v3';
 
-// Assets para cachear na instalação
+// Assets para cachear na instalação (APENAS recursos do próprio site)
 const PRECACHE_ASSETS = [
   '/',
   '/css/styles.css',
@@ -10,8 +10,7 @@ const PRECACHE_ASSETS = [
   '/js/main.js',
   '/js/admin-pins.js',
   '/img/h.ico',
-  '/manifest.json',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap'
+  '/manifest.json'
 ];
 
 // Instalação do Service Worker
@@ -21,13 +20,15 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[SW] Cacheando assets iniciais');
-        // Usar fetch com redirect follow para cada asset
+        // Cachear apenas assets do próprio site
         return Promise.all(
           PRECACHE_ASSETS.map((url) => {
-            return fetch(url, { redirect: 'follow' })
+            // Garantir que é URL relativa (do próprio site)
+            const fullUrl = url.startsWith('http') ? url : new URL(url, self.location.origin).href;
+            return fetch(fullUrl, { redirect: 'follow' })
               .then((response) => {
                 if (response && response.status === 200) {
-                  return cache.put(url, response);
+                  return cache.put(fullUrl, response);
                 }
               })
               .catch((err) => {
@@ -67,6 +68,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // IGNORAR COMPLETAMENTE URLs externas - deixar o navegador lidar normalmente
+  if (url.origin !== self.location.origin) {
+    return; // Não interceptar, deixa passar direto
+  }
+
   // Ignorar requisições de API/admin que precisam ser sempre frescas
   if (url.pathname.startsWith('/admin') && url.pathname !== '/admin') {
     return;
@@ -74,21 +80,6 @@ self.addEventListener('fetch', (event) => {
 
   // Ignorar requisições de API
   if (url.pathname.startsWith('/api')) {
-    return;
-  }
-
-  // Ignorar URLs externas que podem redirecionar (marketplace, etc)
-  // Apenas processar recursos da mesma origem
-  if (url.origin !== self.location.origin) {
-    // Para recursos externos (como fonts), usar fetch normal com redirect follow
-    if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
-      event.respondWith(
-        fetch(request, { redirect: 'follow' }).catch(() => {
-          // Se falhar, não fazer nada (deixa o navegador lidar)
-          return;
-        })
-      );
-    }
     return;
   }
 
