@@ -1,6 +1,6 @@
 // Service Worker para Revista Habitare
-const CACHE_NAME = 'habitare-v1';
-const RUNTIME_CACHE = 'habitare-runtime-v1';
+const CACHE_NAME = 'habitare-v2';
+const RUNTIME_CACHE = 'habitare-runtime-v2';
 
 // Assets para cachear na instalação
 const PRECACHE_ASSETS = [
@@ -21,9 +21,20 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[SW] Cacheando assets iniciais');
-        return cache.addAll(PRECACHE_ASSETS).catch((err) => {
-          console.log('[SW] Erro ao cachear alguns assets:', err);
-        });
+        // Usar fetch com redirect follow para cada asset
+        return Promise.all(
+          PRECACHE_ASSETS.map((url) => {
+            return fetch(url, { redirect: 'follow' })
+              .then((response) => {
+                if (response && response.status === 200) {
+                  return cache.put(url, response);
+                }
+              })
+              .catch((err) => {
+                console.log(`[SW] Erro ao cachear ${url}:`, err);
+              });
+          })
+        );
       })
       .then(() => self.skipWaiting())
   );
@@ -61,12 +72,32 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Ignorar requisições de API
+  if (url.pathname.startsWith('/api')) {
+    return;
+  }
+
+  // Ignorar URLs externas que podem redirecionar (marketplace, etc)
+  // Apenas processar recursos da mesma origem
+  if (url.origin !== self.location.origin) {
+    // Para recursos externos (como fonts), usar fetch normal com redirect follow
+    if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
+      event.respondWith(
+        fetch(request, { redirect: 'follow' }).catch(() => {
+          // Se falhar, não fazer nada (deixa o navegador lidar)
+          return;
+        })
+      );
+    }
+    return;
+  }
+
   // Para uploads, sempre buscar da rede
   if (url.pathname.startsWith('/uploads/')) {
     event.respondWith(
       caches.open(RUNTIME_CACHE).then((cache) => {
-        return fetch(request).then((response) => {
-          if (response.status === 200) {
+        return fetch(request, { redirect: 'follow' }).then((response) => {
+          if (response && response.status === 200 && response.type === 'basic') {
             cache.put(request, response.clone());
           }
           return response;
@@ -85,8 +116,8 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
 
-      return fetch(request).then((response) => {
-        // Só cachear respostas válidas
+      return fetch(request, { redirect: 'follow' }).then((response) => {
+        // Só cachear respostas válidas e da mesma origem
         if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;
         }
@@ -100,7 +131,8 @@ self.addEventListener('fetch', (event) => {
         return response;
       }).catch(() => {
         // Se falhar e for uma página, retornar página offline
-        if (request.headers.get('accept').includes('text/html')) {
+        const acceptHeader = request.headers.get('accept');
+        if (acceptHeader && acceptHeader.includes('text/html')) {
           return caches.match('/');
         }
       });
