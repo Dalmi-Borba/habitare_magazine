@@ -1,10 +1,19 @@
 // Registro do Service Worker para PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+    // Registrar com escopo explícito para evitar interferência entre domínios
+    const swUrl = '/sw.js';
+    const scope = '/'; // Escopo limitado à raiz do domínio atual
+    
     navigator.serviceWorker
-      .register('/sw.js')
+      .register(swUrl, { scope: scope })
       .then((registration) => {
         console.log('[PWA] Service Worker registrado com sucesso:', registration.scope);
+        
+        // Verificar se o escopo está correto
+        if (registration.scope !== window.location.origin + '/') {
+          console.warn('[PWA] Aviso: Escopo do Service Worker pode estar incorreto:', registration.scope);
+        }
 
         // Verificar atualizações periodicamente
         setInterval(() => {
