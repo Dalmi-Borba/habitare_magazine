@@ -1,6 +1,5 @@
 import { Article } from '../models/Article.js';
 import { Pin } from '../models/Pin.js';
-import { buildTrackedLink } from '../utils/buildTrackedLink.js';
 
 export class HomeController {
   constructor(db) {
@@ -22,7 +21,8 @@ export class HomeController {
             ...article,
             pins: pinsRaw.map((pin) => ({
               ...pin,
-              trackingUrl: buildTrackedLink(pin)
+              // Usar cta_path diretamente - o mesmo valor que o usuário preencheu no formulário
+              trackingUrl: pin.cta_path && pin.cta_path.trim() ? pin.cta_path.trim() : '#'
             })),
             pinCount: pinsRaw.length
           };
@@ -77,7 +77,8 @@ export class HomeController {
 
       const pins = pinsRaw.map((pin) => ({
         ...pin,
-        trackingUrl: buildTrackedLink(pin)
+        // Usar cta_path diretamente - o mesmo valor que o usuário preencheu no formulário
+        trackingUrl: pin.cta_path && pin.cta_path.trim() ? pin.cta_path.trim() : '#'
       }));
 
       res.render('article', {

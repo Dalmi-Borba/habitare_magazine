@@ -201,7 +201,25 @@ const initArticlePins = (surfaceElement) => {
     if (popoverDescription) popoverDescription.textContent = pinElement.dataset.description || '';
     if (popoverPrice) popoverPrice.textContent = pinElement.dataset.price || '';
     if (popoverBadge) popoverBadge.textContent = pinElement.dataset.badge || '';
-    if (popoverCta) popoverCta.href = pinElement.dataset.cta || '#';
+    if (popoverCta) {
+      // Pegar o link diretamente do data-cta do pin
+      // Usar getAttribute para garantir que pega o valor correto (dataset pode ter problemas com hífens)
+      const ctaUrl = pinElement.getAttribute('data-cta') || pinElement.dataset.cta || '#';
+      
+      // Debug: verificar o valor
+      console.log('[Pin] CTA URL:', ctaUrl, 'Pin element:', pinElement);
+      
+      // Garantir que o href seja definido corretamente
+      if (ctaUrl && ctaUrl !== '#' && ctaUrl.trim() !== '') {
+        popoverCta.href = ctaUrl.trim();
+        popoverCta.style.pointerEvents = 'auto';
+        popoverCta.style.opacity = '1';
+      } else {
+        popoverCta.href = '#';
+        popoverCta.style.pointerEvents = 'none';
+        popoverCta.style.opacity = '0.5';
+      }
+    }
   };
 
   let hideTimeout;
