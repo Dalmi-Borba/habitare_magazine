@@ -45,20 +45,21 @@ app.locals.brand = {
   tagline: 'Arquitetura, design e ativações para marcas que pensam como publishers.'
 };
 
-app.locals.instagramUrl = process.env.INSTAGRAM_URL || 'https://www.instagram.com';
-app.locals.marketplaceUrl = process.env.MARKETPLACE_URL || '/em-desenvolvimento';
-
 app.locals.formatDate = (dateString) =>
   new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(dateString));
 
 app.locals.readingLabel = (minutes) => `${minutes} min de leitura`;
 
 // Middleware para adicionar db ao request e garantir que variáveis do .env estejam disponíveis
+// IMPORTANTE: Este middleware deve rodar ANTES das rotas para garantir que as variáveis estejam disponíveis
 app.use((req, res, next) => {
   req.db = db;
+  
+  // Variáveis específicas da requisição
   res.locals.currentPath = req.path;
   
   // Garantir que variáveis do .env estejam sempre disponíveis nas views
+  // O Express mescla app.locals com res.locals automaticamente, mas garantimos aqui que as do .env estejam corretas
   res.locals.instagramUrl = process.env.INSTAGRAM_URL || 'https://www.instagram.com';
   res.locals.marketplaceUrl = process.env.MARKETPLACE_URL || '/em-desenvolvimento';
   
