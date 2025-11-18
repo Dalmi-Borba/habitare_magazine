@@ -1,6 +1,6 @@
 // Service Worker para Revista Habitare
-const CACHE_NAME = 'habitare-v6';
-const RUNTIME_CACHE = 'habitare-runtime-v6';
+const CACHE_NAME = 'habitare-v7';
+const RUNTIME_CACHE = 'habitare-runtime-v7';
 
 // Assets para cachear na instalação (APENAS recursos do próprio site)
 const PRECACHE_ASSETS = [
@@ -76,14 +76,23 @@ self.addEventListener('fetch', (event) => {
   // TERCEIRO: IGNORAR COMPLETAMENTE todas as rotas de admin (podem fazer redirecionamentos)
   // IMPORTANTE: Isso deve vir ANTES de qualquer event.respondWith()
   if (url.pathname.startsWith('/admin') || url.pathname === '/admin') {
-    // Debug: confirmar que está ignorando
-    console.log('[SW] Ignorando rota de admin:', url.pathname);
     return; // Não interceptar, deixa passar direto - CRÍTICO para evitar erros de redirect
   }
 
   // QUARTO: Ignorar requisições de API
   if (url.pathname.startsWith('/api')) {
     return;
+  }
+
+  // QUINTO: Ignorar requisições HTML que podem fazer redirecionamento
+  // Verificar se é uma requisição HTML (páginas que podem redirecionar)
+  const acceptHeader = request.headers.get('accept') || '';
+  if (acceptHeader.includes('text/html')) {
+    // Para páginas HTML, só interceptar a página inicial
+    // Todas as outras páginas HTML podem fazer redirecionamento, então ignorar
+    if (url.pathname !== '/' && url.pathname !== '') {
+      return; // Não interceptar páginas HTML que não sejam a inicial
+    }
   }
 
   // Para uploads, sempre buscar da rede
@@ -103,12 +112,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Para outros recursos, usar Cache First
-  // VERIFICAÇÃO FINAL: garantir que não é admin (segurança extra)
-  if (url.pathname.startsWith('/admin') || url.pathname === '/admin') {
-    return; // Não interceptar admin de forma alguma
-  }
-
+  // Para outros recursos (CSS, JS, imagens, etc), usar Cache First
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
