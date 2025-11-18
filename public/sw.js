@@ -68,15 +68,17 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // SEGUNDO: IGNORAR COMPLETAMENTE URLs externas - deixar o navegador lidar normalmente
+  // SEGUNDO: IGNORAR COMPLETAMENTE URLs externas
   if (url.origin !== self.location.origin) {
-    return; // Deixa o navegador lidar normalmente, sem interceptação
+    return;
   }
 
-  // TERCEIRO: IGNORAR COMPLETAMENTE todas as rotas de admin (podem fazer redirecionamentos)
-  // IMPORTANTE: Isso deve vir ANTES de qualquer event.respondWith()
-  if (url.pathname.startsWith('/admin') || url.pathname === '/admin') {
-    return; // Não interceptar, deixa passar direto - CRÍTICO para evitar erros de redirect
+  // TERCEIRO: IGNORAR COMPLETAMENTE TODAS as rotas de admin - SEM EXCEÇÕES
+  // Isso DEVE ser a primeira verificação para rotas internas
+  if (url.pathname.startsWith('/admin') || 
+      url.pathname === '/admin' || 
+      url.pathname.includes('/admin/')) {
+    return; // NÃO INTERCEPTAR - deixa o navegador lidar normalmente
   }
 
   // QUARTO: Ignorar requisições de API
@@ -84,14 +86,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // QUINTO: Ignorar requisições HTML que podem fazer redirecionamento
-  // Verificar se é uma requisição HTML (páginas que podem redirecionar)
+  // QUINTO: Ignorar TODAS as requisições HTML exceto a página inicial
+  // Páginas HTML podem fazer redirecionamento e causar problemas
   const acceptHeader = request.headers.get('accept') || '';
   if (acceptHeader.includes('text/html')) {
-    // Para páginas HTML, só interceptar a página inicial
-    // Todas as outras páginas HTML podem fazer redirecionamento, então ignorar
-    if (url.pathname !== '/' && url.pathname !== '') {
-      return; // Não interceptar páginas HTML que não sejam a inicial
+    // Só interceptar a página inicial, todas as outras HTML são ignoradas
+    if (url.pathname !== '/' && url.pathname !== '' && !url.pathname.endsWith('.html')) {
+      return; // Não interceptar páginas HTML
     }
   }
 
