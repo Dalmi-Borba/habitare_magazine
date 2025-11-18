@@ -1,6 +1,6 @@
 // Service Worker para Revista Habitare
-const CACHE_NAME = 'habitare-v5';
-const RUNTIME_CACHE = 'habitare-runtime-v5';
+const CACHE_NAME = 'habitare-v6';
+const RUNTIME_CACHE = 'habitare-runtime-v6';
 
 // Assets para cachear na instalação (APENAS recursos do próprio site)
 const PRECACHE_ASSETS = [
@@ -63,23 +63,25 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Ignorar requisições não-GET
+  // PRIMEIRO: Ignorar requisições não-GET
   if (request.method !== 'GET') {
     return;
   }
 
-  // IGNORAR COMPLETAMENTE URLs externas - deixar o navegador lidar normalmente
-  // Se a origem for diferente, não interceptar de forma alguma
+  // SEGUNDO: IGNORAR COMPLETAMENTE URLs externas - deixar o navegador lidar normalmente
   if (url.origin !== self.location.origin) {
     return; // Deixa o navegador lidar normalmente, sem interceptação
   }
 
-  // IGNORAR COMPLETAMENTE todas as rotas de admin (podem fazer redirecionamentos)
-  if (url.pathname.startsWith('/admin')) {
-    return; // Não interceptar, deixa passar direto
+  // TERCEIRO: IGNORAR COMPLETAMENTE todas as rotas de admin (podem fazer redirecionamentos)
+  // IMPORTANTE: Isso deve vir ANTES de qualquer event.respondWith()
+  if (url.pathname.startsWith('/admin') || url.pathname === '/admin') {
+    // Debug: confirmar que está ignorando
+    console.log('[SW] Ignorando rota de admin:', url.pathname);
+    return; // Não interceptar, deixa passar direto - CRÍTICO para evitar erros de redirect
   }
 
-  // Ignorar requisições de API
+  // QUARTO: Ignorar requisições de API
   if (url.pathname.startsWith('/api')) {
     return;
   }
@@ -102,6 +104,11 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Para outros recursos, usar Cache First
+  // VERIFICAÇÃO FINAL: garantir que não é admin (segurança extra)
+  if (url.pathname.startsWith('/admin') || url.pathname === '/admin') {
+    return; // Não interceptar admin de forma alguma
+  }
+
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
