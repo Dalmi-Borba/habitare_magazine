@@ -1,6 +1,6 @@
 // Service Worker para Revista Habitare
-const CACHE_NAME = 'habitare-v3';
-const RUNTIME_CACHE = 'habitare-runtime-v3';
+const CACHE_NAME = 'habitare-v4';
+const RUNTIME_CACHE = 'habitare-runtime-v4';
 
 // Assets para cachear na instalação (APENAS recursos do próprio site)
 const PRECACHE_ASSETS = [
@@ -69,8 +69,9 @@ self.addEventListener('fetch', (event) => {
   }
 
   // IGNORAR COMPLETAMENTE URLs externas - deixar o navegador lidar normalmente
+  // Se a origem for diferente, não interceptar de forma alguma
   if (url.origin !== self.location.origin) {
-    return; // Não interceptar, deixa passar direto
+    return; // Deixa o navegador lidar normalmente, sem interceptação
   }
 
   // Ignorar requisições de API/admin que precisam ser sempre frescas
