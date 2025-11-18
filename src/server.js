@@ -16,6 +16,11 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 5444;
 
+// Debug: verificar se variáveis do .env estão sendo lidas
+console.log('Variáveis do ambiente:');
+console.log('  INSTAGRAM_URL:', process.env.INSTAGRAM_URL || '(não definida, usando padrão)');
+console.log('  MARKETPLACE_URL:', process.env.MARKETPLACE_URL || '(não definida, usando padrão)');
+
 const app = express();
 const db = await initDatabase();
 
@@ -48,10 +53,15 @@ app.locals.formatDate = (dateString) =>
 
 app.locals.readingLabel = (minutes) => `${minutes} min de leitura`;
 
-// Middleware para adicionar db ao request
+// Middleware para adicionar db ao request e garantir que variáveis do .env estejam disponíveis
 app.use((req, res, next) => {
   req.db = db;
   res.locals.currentPath = req.path;
+  
+  // Garantir que variáveis do .env estejam sempre disponíveis nas views
+  res.locals.instagramUrl = process.env.INSTAGRAM_URL || 'https://www.instagram.com';
+  res.locals.marketplaceUrl = process.env.MARKETPLACE_URL || '/em-desenvolvimento';
+  
   next();
 });
 
